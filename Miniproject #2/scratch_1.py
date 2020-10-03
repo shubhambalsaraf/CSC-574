@@ -2,8 +2,8 @@ import requests
 import json
 import matplotlib.pyplot as plt
 API_URL = "https://censys.io/api/v1/search/ipv4"
-UID = "cd0e5975-66a4-4709-a6c4-213dbb5371af"
-SECRET = "OvulOsweVcTXHPm3djbuYBXUWJikaLBd"
+UID = "Enter Your UID Here"
+SECRET = "Enter Your Secret Here"
 data = '{ "query": "ip: 152.1.0.0/16 ", "flatten": true, "fields": ["ip", "80.http.get.headers.server", "protocols", "metadata.os"]}'
 res = requests.post(API_URL, headers = {"Content-Type": "application/json"}, auth=(UID, SECRET), data= data)
 jsn = json.loads(res.content.decode("utf-8"))
@@ -49,14 +49,6 @@ for pr in prot:               #protocols count from list to dictionary
   else:
     protocols_[pr] =1
 print(ipcount)
-
-
-
-
-
-
-
-
 
 
 
