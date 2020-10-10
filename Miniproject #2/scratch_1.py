@@ -2,9 +2,9 @@ import requests
 import json
 import matplotlib.pyplot as plt
 API_URL = "https://censys.io/api/v1/search/ipv4"
-UID = "Enter Your UID Here"
-SECRET = "Enter Your Secret Here"
-data = '{ "query": "ip: 152.1.0.0/16 ", "flatten": true, "fields": ["ip", "80.http.get.headers.server", "protocols", "metadata.os"]}'
+UID = "cd0e5975-66a4-4709-a6c4-213dbb5371af"
+SECRET = "OvulOsweVcTXHPm3djbuYBXUWJikaLBd"
+data = '{ "query": "ip: 152.46.3.0/24 ", "flatten": true, "fields": ["ip", "80.http.get.headers.server", "protocols", "metadata.os", "tags"]}'  #Enter the CIDR block in the query key,
 res = requests.post(API_URL, headers = {"Content-Type": "application/json"}, auth=(UID, SECRET), data= data)
 jsn = json.loads(res.content.decode("utf-8"))
 for k, v in jsn.items():
@@ -12,12 +12,14 @@ for k, v in jsn.items():
     a = v
 text_file = open("Output.txt", "w")
 ipcount = 0
+tags = []
 z = []
 prot = []
 server = []
-oscount = {'Windows':0, 'Ubuntu':0, 'Unix':0, 'Fedora':0, 'Raspbian':0, 'Unknown':0}
+oscount = {}
 protocols_ = {}
 servers_ = {}
+tags_ = {}
 for i in a:
   for x,v in i.items():
     #print(x)
@@ -33,24 +35,37 @@ for i in a:
       server.append(v)
     if x == 'protocols':
       prot.extend(v)
-
+    if x == 'tags':
+      tags.extend(v)
 
 for key in z:                     #os count from list to dictionary
-  oscount[key]+=1
+  if key in oscount:
+    oscount[key] +=1
+  else:
+    oscount[key] = 1
+
 for new in server:                #server count from list to dictionary
   if new in servers_:
     servers_[new]+=1
   else:
     servers_[new] = 1
-
 for pr in prot:               #protocols count from list to dictionary
   if pr in protocols_:
     protocols_[pr] +=1
   else:
     protocols_[pr] =1
+for tg in tags:
+  if tg in tags_:
+    tags_[tg] +=1
+  else:
+    tags_[tg] =1
+
+
 print(ipcount)
-
-
+print(oscount)
+print(servers_)
+print(protocols_)
+print(tags_)
 
 ## Plot graphs using Matplotlib library ##
 plt.figure('Operating Systems')   ##OS
@@ -71,7 +86,6 @@ plt.ylabel('Hosts')
 plt.show()
 
 plt.figure('Protocols')         #Protocols
-#print(servers_)
 nameofprot = protocols_.keys()
 noofprot = protocols_.values()
 plt.bar(nameofprot, noofprot, color = 'yellow')
@@ -80,8 +94,17 @@ plt.ylabel('Number of hosts')
 plt.show()
 
 
+plt.figure('Tags')            #Tags
+nameoftag = tags_.keys()
+nooftag = tags_.values()
+plt.bar(nameoftag, nooftag, color = 'red')
+plt.xlabel('Name of Tag')
+plt.ylabel('Number of tags')
+plt.show()
+
+
 plt.figure('Total number of hosts in the two CIDR block')
-newdict = {'152.1.0.0/16': 100, '192.58.122.0/24':5}
+newdict = {'152.1.0.0/16': 100, '152.46.3.0/24':83, '192.58.122.0/24':5}
 plt.bar(newdict.keys(), newdict.values(), color = 'orange')
 plt.xlabel('CIDR Block')
 plt.ylabel('Total number of hosts')
