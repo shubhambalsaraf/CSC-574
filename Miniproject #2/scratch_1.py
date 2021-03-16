@@ -2,8 +2,8 @@ import requests
 import json
 import matplotlib.pyplot as plt
 API_URL = "https://censys.io/api/v1/search/ipv4"
-UID = "cd0e5975-66a4-4709-a6c4-213dbb5371af"
-SECRET = "OvulOsweVcTXHPm3djbuYBXUWJikaLBd"
+UID = "cddbb5371af" #Enter your UID here
+SECRET = "OvuUWJikaLBd" #Enter your SECRET here
 data = '{ "query": "ip: 152.46.3.0/24 ", "flatten": true, "fields": ["ip", "80.http.get.headers.server", "protocols", "metadata.os", "tags"]}'  #Enter the CIDR block in the query key,
 res = requests.post(API_URL, headers = {"Content-Type": "application/json"}, auth=(UID, SECRET), data= data)
 jsn = json.loads(res.content.decode("utf-8"))
